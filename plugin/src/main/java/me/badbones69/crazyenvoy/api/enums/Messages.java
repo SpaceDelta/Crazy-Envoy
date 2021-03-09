@@ -141,7 +141,7 @@ public enum Messages {
         return getMessage(new HashMap<>(), prefix);
     }
     
-    private String getMessage(Map<String, String> placeholders, boolean prefix) {
+    public String getMessage(Map<String, String> placeholders, boolean prefix) {
         String message;
         boolean isList = isList();
         boolean exists = exists();
@@ -189,6 +189,8 @@ public enum Messages {
     }
     
     public void broadcastMessage(boolean ignore, Map<String, String> placeholder) {
+        Bukkit.broadcastMessage(getMessage(placeholder));
+        /*
         if (envoySettings.isWorldMessagesEnabled()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 for (String world : envoySettings.getWorldMessagesWorlds()) {
@@ -215,6 +217,7 @@ public enum Messages {
             }
         }
         Bukkit.getLogger().log(Level.INFO, getMessage(placeholder));
+         */
     }
     
     private boolean exists() {
