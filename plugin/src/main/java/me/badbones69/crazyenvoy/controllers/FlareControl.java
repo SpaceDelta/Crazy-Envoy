@@ -1,5 +1,6 @@
 package me.badbones69.crazyenvoy.controllers;
 
+import me.badbones69.crazyenvoy.Main;
 import me.badbones69.crazyenvoy.Methods;
 import me.badbones69.crazyenvoy.api.CrazyEnvoy;
 import me.badbones69.crazyenvoy.api.enums.Messages;
@@ -34,7 +35,7 @@ public class FlareControl implements Listener {
                     if (envoy.isEnvoyActive()) {
                         Messages.ALREADY_STARTED.sendMessage(player);
                     } else {
-                        int online = Bukkit.getServer().getOnlinePlayers().size();
+                        int online = Main.INSTANCE.getOnlinePlayers();
                         if (envoySettings.isMinPlayersEnabled() && envoySettings.isMinFlareEnabled() && online < envoySettings.getMinPlayers()) {
                             HashMap<String, String> placeholder = new HashMap<>();
                             placeholder.put("%amount%", online + "");

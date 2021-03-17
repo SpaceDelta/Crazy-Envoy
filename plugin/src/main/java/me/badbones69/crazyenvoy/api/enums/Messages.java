@@ -67,18 +67,16 @@ public enum Messages {
     "&6/envoy stop &7- Force stops the envoy.",
     "&6/envoy center &7- Set the center of the random crate drops."));
     
-    private String path;
+    private final String path;
     private String defaultMessage;
     private List<String> defaultListMessage;
-    private CrazyEnvoy envoy = CrazyEnvoy.getInstance();
-    private EnvoySettings envoySettings = EnvoySettings.getInstance();
     
-    private Messages(String path, String defaultMessage) {
+    Messages(String path, String defaultMessage) {
         this.path = path;
         this.defaultMessage = defaultMessage;
     }
     
-    private Messages(String path, List<String> defaultListMessage) {
+    Messages(String path, List<String> defaultListMessage) {
         this.path = path;
         this.defaultListMessage = defaultListMessage;
     }

@@ -14,6 +14,7 @@ import me.badbones69.crazyenvoy.multisupport.holograms.HolographicSupport;
 import me.badbones69.crazyenvoy.sync.MessageType;
 import me.badbones69.crazyenvoy.sync.handler.ChatMessageHandler;
 import me.badbones69.crazyenvoy.sync.handler.TimeRequestHandler;
+import net.spacedelta.lib.network.data.model.server.ServerGroup;
 import net.spacedelta.lib.plugin.BukkitPlugin;
 import net.spacedelta.lib.plugin.PluginSide;
 import net.spacedelta.lib.plugin.annotation.Instance;
@@ -90,21 +91,9 @@ public class Main extends BukkitPlugin implements Listener {
         }
         envoy.unload();
     }
-    
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        final Player player = e.getPlayer();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (player.getName().equals("BadBones69")) {
-                    player.sendMessage(Methods.getPrefix() + Methods.color("&7This server is running your Crazy envoy Plugin. " + "&7It is running version &av" + envoy.getPlugin().getDescription().getVersion() + "&7."));
-                }
-                if (player.isOp()) {
-                    Methods.hasUpdate(player);
-                }
-            }
-        }.runTaskLaterAsynchronously(this, 20);
+
+    public int getOnlinePlayers() {
+        return getLibrary().getNetworkManager().getOnlineGroup(ServerGroup.SKYBLOCK);
     }
     
 }

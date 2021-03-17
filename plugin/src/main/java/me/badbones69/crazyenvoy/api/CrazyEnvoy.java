@@ -1,5 +1,6 @@
 package me.badbones69.crazyenvoy.api;
 
+import me.badbones69.crazyenvoy.Main;
 import me.badbones69.crazyenvoy.Methods;
 import me.badbones69.crazyenvoy.api.FileManager.CustomFile;
 import me.badbones69.crazyenvoy.api.FileManager.Files;
@@ -56,7 +57,6 @@ public class CrazyEnvoy {
     private HashMap<Location, BukkitTask> activeSignals = new HashMap<>();
     private List<Tier> tiers = new ArrayList<>();
     private List<Tier> cechedChances = new ArrayList<>();
-    private Plugin plugin;
     private Random random = new Random();
     
     /**
@@ -78,7 +78,6 @@ public class CrazyEnvoy {
         blacklistedBlocks.clear();
         cechedChances.clear();
         envoySettings.loadSettings();
-        plugin = Bukkit.getPluginManager().getPlugin("CrazyEnvoy");
         FileConfiguration data = Files.DATA.getFile();
         envoyTimeLeft = Calendar.getInstance();
         List<String> failedLocations = new ArrayList<>();
@@ -254,7 +253,7 @@ public class CrazyEnvoy {
                         if (fileManager.isLogging()) System.out.println("[CrazyEnvoy] No supported hologram plugin was found.");
                     }
                 }
-            }.runTaskLater(plugin, 200);
+            }.runTaskLater(Main.INSTANCE, 200);
         }
         if (!failedLocations.isEmpty()) {
             new BukkitRunnable() {
@@ -275,7 +274,7 @@ public class CrazyEnvoy {
                     if (fileManager.isLogging() && fixed > 0) System.out.println("[CrazyEnvoy] Was able to fix " + fixed + " locations that failed.");
                     if (fileManager.isLogging() && failed > 0) System.out.println("[CrazyEnvoy] Failed to fix " + failed + " locations and will not reattempt.");
                 }
-            }.runTaskLater(plugin, 200);
+            }.runTaskLater(Main.INSTANCE, 200);
         }
         Flare.load();
     }
@@ -318,7 +317,8 @@ public class CrazyEnvoy {
                     next.clear(Calendar.MILLISECOND);
                     if (next.compareTo(cal) <= 0 && !isEnvoyActive()) {
                         if (envoySettings.isMinPlayersEnabled()) {
-                            int online = Bukkit.getServer().getOnlinePlayers().size();
+                            final int online = Main.INSTANCE.getOnlinePlayers();
+
                             if (online < envoySettings.getMinPlayers()) {
                                 HashMap<String, String> placeholder = new HashMap<>();
                                 placeholder.put("%amount%", online + "");
@@ -344,7 +344,7 @@ public class CrazyEnvoy {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 20, 20);
+        }.runTaskTimer(Main.INSTANCE, 20, 20);
     }
     
     /**
@@ -789,7 +789,7 @@ public class CrazyEnvoy {
                 Messages.ENDED.broadcastMessage(false);
                 endEnvoyEvent();
             }
-        }.runTaskLater(plugin, getTimeSeconds(envoySettings.getEnvoyRunTimer()) * 20);
+        }.runTaskLater(Main.INSTANCE, getTimeSeconds(envoySettings.getEnvoyRunTimer()) * 20);
         envoyTimeLeft = getEnvoyRunTimeCalendar();
         return true;
     }
@@ -841,7 +841,7 @@ public class CrazyEnvoy {
             public void run() {
                 playSignal(loc.clone().add(.5, 0, .5), tier);
             }
-        }.runTaskTimer(plugin, getTimeSeconds(tier.getSignalFlareTimer()) * 20, getTimeSeconds(tier.getSignalFlareTimer()) * 20);
+        }.runTaskTimer(Main.INSTANCE, getTimeSeconds(tier.getSignalFlareTimer()) * 20, getTimeSeconds(tier.getSignalFlareTimer()) * 20);
         activeSignals.put(loc, task);
     }
     
@@ -906,7 +906,7 @@ public class CrazyEnvoy {
      * @return The Plugin object.
      */
     public Plugin getPlugin() {
-        return plugin;
+        return Main.INSTANCE;
     }
     
     /**
