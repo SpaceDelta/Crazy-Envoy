@@ -48,5 +48,3 @@ Settings:
       Toggle: false #If they have to use flares in specified regions.
       Regions: #The name of the regions you can use flares in.
         - 'WarZone'
-
-side: CLIENT

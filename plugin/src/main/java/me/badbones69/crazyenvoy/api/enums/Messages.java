@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public enum Messages {
     
@@ -82,11 +83,9 @@ public enum Messages {
     }
     
     public static String convertList(List<String> list) {
-        StringBuilder message = new StringBuilder();
-        for (String line : list) {
-            message.append(Methods.color(line)).append("\n");
-        }
-        return message.toString();
+        return list.stream()
+                .map(Methods::color)
+                .collect(Collectors.joining("\n"));
     }
     
     public static void addMissingMessages() {
