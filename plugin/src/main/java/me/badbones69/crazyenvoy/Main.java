@@ -4,6 +4,7 @@ import me.badbones69.crazyenvoy.api.CrazyEnvoy;
 import me.badbones69.crazyenvoy.api.FileManager;
 import me.badbones69.crazyenvoy.api.events.EnvoyEndEvent;
 import me.badbones69.crazyenvoy.api.events.EnvoyEndEvent.EnvoyEndReason;
+import me.badbones69.crazyenvoy.api.objects.Flare;
 import me.badbones69.crazyenvoy.commands.EnvoyCommand;
 import me.badbones69.crazyenvoy.commands.EnvoyCommandLite;
 import me.badbones69.crazyenvoy.controllers.*;
@@ -36,41 +37,49 @@ public class Main extends BukkitPlugin implements Listener {
     
     @Override
     public void enable() {
+        PluginManager pm = Bukkit.getPluginManager();
+
         if (getSide() == PluginSide.CLIENT) {
             getCommand("envoy").setExecutor(new EnvoyCommandLite());
             getLibrary().getMessageBus().registerHandler(this, MessageType.CHAT_MESSAGE, new ChatMessageHandler());
-            return;
+
+            fileManager.setup(this);
+            Flare.load();
+        } else {
+
+            String homeFolder = Version.isNewer(Version.v1_12_R1) ? "/Tiers1.13-Up" : "/Tiers1.12.2-Down";
+            fileManager.logInfo(true)
+                    .registerCustomFilesFolder("/Tiers")
+                    .registerDefaultGenerateFiles("Basic.yml", "/Tiers", homeFolder)
+                    .registerDefaultGenerateFiles("Lucky.yml", "/Tiers", homeFolder)
+                    .registerDefaultGenerateFiles("Titan.yml", "/Tiers", homeFolder)
+                    .setup(this);
+
+            envoy.load();
+            Methods.hasUpdate();
+            new Metrics(this);
+
+            pm.registerEvents(new EditControl(), this);
+            pm.registerEvents(new EnvoyControl(), this);
+
+            try {
+                if (Version.isNewer(Version.v1_10_R1)) {
+                    pm.registerEvents(new FireworkDamageAPI(this), this);
+                }
+            } catch (Exception e) {
+            }
+            if (Support.HOLOGRAPHIC_DISPLAYS.isPluginLoaded()) {
+                HolographicSupport.registerPlaceHolders();
+            }
+            if (Support.PLACEHOLDER_API.isPluginLoaded()) {
+                new PlaceholderAPISupport(this).register();
+            }
+
+            getCommand("envoy").setExecutor(new EnvoyCommand());
+            getLibrary().getMessageBus().registerHandler(this, MessageType.TIME_REQUEST, new TimeRequestHandler());
         }
 
-        String homeFolder = Version.isNewer(Version.v1_12_R1) ? "/Tiers1.13-Up" : "/Tiers1.12.2-Down";
-        fileManager.logInfo(true)
-        .registerCustomFilesFolder("/Tiers")
-        .registerDefaultGenerateFiles("Basic.yml", "/Tiers", homeFolder)
-        .registerDefaultGenerateFiles("Lucky.yml", "/Tiers", homeFolder)
-        .registerDefaultGenerateFiles("Titan.yml", "/Tiers", homeFolder)
-        .setup(this);
-        envoy.load();
-        Methods.hasUpdate();
-        new Metrics(this);
-        PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(this, this);
-        pm.registerEvents(new EditControl(), this);
-        pm.registerEvents(new EnvoyControl(), this);
         pm.registerEvents(new FlareControl(), this);
-        try {
-            if (Version.isNewer(Version.v1_10_R1)) {
-                pm.registerEvents(new FireworkDamageAPI(this), this);
-            }
-        } catch (Exception e) {
-        }
-        if (Support.HOLOGRAPHIC_DISPLAYS.isPluginLoaded()) {
-            HolographicSupport.registerPlaceHolders();
-        }
-        if (Support.PLACEHOLDER_API.isPluginLoaded()) {
-            new PlaceholderAPISupport(this).register();
-        }
-        getCommand("envoy").setExecutor(new EnvoyCommand());
-        getLibrary().getMessageBus().registerHandler(this, MessageType.TIME_REQUEST, new TimeRequestHandler());
     }
     
     @Override

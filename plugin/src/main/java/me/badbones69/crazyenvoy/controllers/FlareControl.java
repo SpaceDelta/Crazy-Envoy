@@ -9,7 +9,9 @@ import me.badbones69.crazyenvoy.api.events.EnvoyStartEvent.EnvoyStartReason;
 import me.badbones69.crazyenvoy.api.objects.EnvoySettings;
 import me.badbones69.crazyenvoy.api.objects.Flare;
 import me.badbones69.crazyenvoy.multisupport.Support;
+import net.spacedelta.lib.plugin.PluginSide;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,6 +33,14 @@ public class FlareControl implements Listener {
             ItemStack flare = Methods.getItemInHand(player);
             if (flare != null && Flare.isFlare(flare)) {
                 e.setCancelled(true);
+
+                // SpaceDelta
+                if (Main.INSTANCE.getSide() != PluginSide.SERVER) {
+                    player.sendMessage(ChatColor.RED + "You can only call flares in /pvp!");
+                    return;
+                }
+                // End SpaceDelta
+
                 if (player.hasPermission("envoy.flare.use")) {
                     if (envoy.isEnvoyActive()) {
                         Messages.ALREADY_STARTED.sendMessage(player);
