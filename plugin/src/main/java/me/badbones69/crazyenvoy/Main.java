@@ -14,6 +14,7 @@ import me.badbones69.crazyenvoy.multisupport.Version;
 import me.badbones69.crazyenvoy.multisupport.holograms.HolographicSupport;
 import me.badbones69.crazyenvoy.sync.MessageType;
 import me.badbones69.crazyenvoy.sync.handler.ChatMessageHandler;
+import me.badbones69.crazyenvoy.sync.handler.ClientStateHandler;
 import me.badbones69.crazyenvoy.sync.handler.TimeRequestHandler;
 import net.spacedelta.lib.network.data.model.server.ServerGroup;
 import net.spacedelta.lib.plugin.BukkitPlugin;
@@ -42,6 +43,7 @@ public class Main extends BukkitPlugin implements Listener {
         if (getSide() == PluginSide.CLIENT) {
             getCommand("envoy").setExecutor(new EnvoyCommandLite());
             getLibrary().getMessageBus().registerHandler(this, MessageType.CHAT_MESSAGE, new ChatMessageHandler());
+            getLibrary().getMessageBus().registerHandler(this, MessageType.STATE, new ClientStateHandler());
 
             fileManager.setup(this);
             Flare.load();

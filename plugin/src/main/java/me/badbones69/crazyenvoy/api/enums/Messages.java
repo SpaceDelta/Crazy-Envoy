@@ -4,10 +4,13 @@ import me.badbones69.crazyenvoy.Methods;
 import me.badbones69.crazyenvoy.api.CrazyEnvoy;
 import me.badbones69.crazyenvoy.api.FileManager.Files;
 import me.badbones69.crazyenvoy.api.objects.EnvoySettings;
+import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -216,7 +219,34 @@ public enum Messages {
         Bukkit.getLogger().log(Level.INFO, getMessage(placeholder));
          */
     }
-    
+
+    /**
+     * Send a message only to a local world.
+     *
+     * @param world world
+     * @param ignore ignored parameter
+     * @param placeholder placeholders
+     */
+    public void broadcastMessageLocal(@NotNull World world, boolean ignore, Map<String, String> placeholder) {
+        String message = getMessage(placeholder);
+        world.getPlayers().forEach(player -> player.sendMessage(message));
+        // Bukkit.getLogger().log(Level.INFO, getMessage(placeholder));
+    }
+
+    /**
+     * Send a message only to a local world on action bar.
+     *
+     * @param world world
+     * @param ignore ignored parameter
+     * @param placeholder placeholders
+     */
+    public void broadcastMessageActionBar(@NotNull World world, boolean ignore, Map<String, String> placeholder) {
+        String message = getMessage(placeholder);
+        world.getPlayers().forEach(player -> player.sendActionBar(message));
+        // Bukkit.getLogger().log(Level.INFO, getMessage(placeholder));
+    }
+
+
     private boolean exists() {
         return Files.MESSAGES.getFile().contains("Messages." + path);
     }

@@ -1,5 +1,6 @@
 package me.badbones69.crazyenvoy.commands;
 
+import com.google.common.collect.Maps;
 import me.badbones69.crazyenvoy.Methods;
 import me.badbones69.crazyenvoy.api.CrazyEnvoy;
 import me.badbones69.crazyenvoy.api.FileManager;
@@ -220,7 +221,8 @@ public class EnvoyCommand implements CommandExecutor {
                             }
                             Bukkit.getPluginManager().callEvent(event);
                             envoy.endEnvoyEvent();
-                            Messages.ENDED.broadcastMessage(false);
+                            if (envoy.getEnvoyBossbar().getWorld() != null)
+                            Messages.ENDED.broadcastMessageLocal(envoy.getEnvoyBossbar().getWorld(), false, Maps.newHashMap());
                             Messages.FORCE_ENDED.sendMessage(sender);
                         } else {
                             Messages.NOT_STARTED.sendMessage(sender);

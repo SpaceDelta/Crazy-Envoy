@@ -1,5 +1,6 @@
 package me.badbones69.crazyenvoy.controllers;
 
+import com.google.common.collect.Maps;
 import me.badbones69.crazyenvoy.Methods;
 import me.badbones69.crazyenvoy.api.CrazyEnvoy;
 import me.badbones69.crazyenvoy.api.enums.Messages;
@@ -10,6 +11,7 @@ import me.badbones69.crazyenvoy.api.objects.EnvoySettings;
 import me.badbones69.crazyenvoy.api.objects.ItemBuilder;
 import me.badbones69.crazyenvoy.api.objects.Prize;
 import me.badbones69.crazyenvoy.api.objects.Tier;
+import me.badbones69.crazyenvoy.bossbar.EnvoyBossbarTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -105,13 +107,21 @@ public class EnvoyControl implements Listener {
                             placeholder.put("%Player%", player.getName());
                             placeholder.put("%amount%", envoy.getActiveEnvoys().size() + "");
                             placeholder.put("%Amount%", envoy.getActiveEnvoys().size() + "");
-                            Messages.LEFT.broadcastMessage(true, placeholder);
+
+                            final EnvoyBossbarTracker envoyBossbar = envoy.getEnvoyBossbar();
+                            envoyBossbar.triggerUpdate(envoy.getActiveEnvoys().size());
+
+                            if (envoyBossbar.getWorld() != null)
+                                Messages.LEFT.broadcastMessageActionBar(envoyBossbar.getWorld(), true, placeholder);
                         }
                     } else {
                         EnvoyEndEvent event = new EnvoyEndEvent(EnvoyEndReason.ALL_CRATES_COLLECTED);
                         Bukkit.getPluginManager().callEvent(event);
+
+                        // SpaceDelta
+                        if (envoy.getEnvoyBossbar().getWorld() != null)
+                            Messages.ENDED.broadcastMessageLocal(envoy.getEnvoyBossbar().getWorld(), false, Maps.newHashMap());
                         envoy.endEnvoyEvent();
-                        Messages.ENDED.broadcastMessage(false);
                     }
                 }
             }

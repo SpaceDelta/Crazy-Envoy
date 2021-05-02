@@ -1,5 +1,6 @@
 package me.badbones69.crazyenvoy.api;
 
+import com.google.common.collect.Maps;
 import me.badbones69.crazyenvoy.Main;
 import me.badbones69.crazyenvoy.Methods;
 import me.badbones69.crazyenvoy.api.FileManager.CustomFile;
@@ -11,11 +12,13 @@ import me.badbones69.crazyenvoy.api.events.EnvoyStartEvent;
 import me.badbones69.crazyenvoy.api.events.EnvoyStartEvent.EnvoyStartReason;
 import me.badbones69.crazyenvoy.api.interfaces.HologramController;
 import me.badbones69.crazyenvoy.api.objects.*;
+import me.badbones69.crazyenvoy.bossbar.EnvoyBossbarTracker;
 import me.badbones69.crazyenvoy.controllers.EditControl;
 import me.badbones69.crazyenvoy.controllers.EnvoyControl;
 import me.badbones69.crazyenvoy.controllers.FireworkDamageAPI;
 import me.badbones69.crazyenvoy.multisupport.*;
 import me.badbones69.crazyenvoy.multisupport.holograms.HolographicSupport;
+import me.badbones69.crazyenvoy.sync.handler.ClientStateHandler;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,6 +31,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -58,7 +62,10 @@ public class CrazyEnvoy {
     private List<Tier> tiers = new ArrayList<>();
     private List<Tier> cechedChances = new ArrayList<>();
     private Random random = new Random();
-    
+
+    // SpaceDelta
+    private final EnvoyBossbarTracker envoyBossbar = new EnvoyBossbarTracker();
+
     /**
      * Get the instance of the envoy plugin.
      * @return The instance of the envoy plugin.
@@ -288,6 +295,9 @@ public class CrazyEnvoy {
         Files.DATA.saveFile();
         spawnLocations.clear();
         EnvoyControl.clearCooldowns();
+        // SpaceDelta
+        envoyBossbar.destroy();
+        ClientStateHandler.submitStateChange(false);
     }
     
     /**
@@ -786,11 +796,16 @@ public class CrazyEnvoy {
             public void run() {
                 EnvoyEndEvent event = new EnvoyEndEvent(EnvoyEndReason.OUT_OF_TIME);
                 Bukkit.getPluginManager().callEvent(event);
-                Messages.ENDED.broadcastMessage(false);
+
+                Messages.ENDED.broadcastMessageLocal(envoyBossbar.getWorld(), false, Maps.newHashMap());
                 endEnvoyEvent();
             }
         }.runTaskLater(Main.INSTANCE, getTimeSeconds(envoySettings.getEnvoyRunTimer()) * 20);
         envoyTimeLeft = getEnvoyRunTimeCalendar();
+
+        envoyBossbar.init(dropLocations.get(0).getWorld(), dropLocations.size()); // SpaceDelta
+        ClientStateHandler.submitStateChange(true); // SpaceDelta
+
         return true;
     }
     
@@ -805,6 +820,8 @@ public class CrazyEnvoy {
             setNextEnvoy(getEnvoyCooldown());
             resetWarnings();
         }
+        envoyBossbar.destroy(); // SpaceDelta
+        ClientStateHandler.submitStateChange(false); // SpaceDelta
         EnvoyControl.clearCooldowns();
     }
     
@@ -1102,5 +1119,9 @@ public class CrazyEnvoy {
         }
         return cechedChances.get(random.nextInt(cechedChances.size()));
     }
-    
+
+    @NotNull
+    public EnvoyBossbarTracker getEnvoyBossbar() {
+        return envoyBossbar;
+    }
 }
