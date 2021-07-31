@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-group 'net.spacedelta'
+group 'me.badbones69'
 version '1.3.11-RELEASE'
 
 sourceCompatibility = 11
@@ -84,7 +84,7 @@ publishing {
                 password sd_pass
             }
 
-            url sd_libs
+            url sd_ext_libs
             allowInsecureProtocol = true
         }
     }
