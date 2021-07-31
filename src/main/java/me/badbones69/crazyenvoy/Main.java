@@ -16,6 +16,7 @@ import me.badbones69.crazyenvoy.sync.MessageType;
 import me.badbones69.crazyenvoy.sync.handler.ChatMessageHandler;
 import me.badbones69.crazyenvoy.sync.handler.ClientStateHandler;
 import me.badbones69.crazyenvoy.sync.handler.TimeRequestHandler;
+import net.spacedelta.lib.network.data.model.server.ServerClass;
 import net.spacedelta.lib.network.data.model.server.ServerGroup;
 import net.spacedelta.lib.plugin.BukkitPlugin;
 import net.spacedelta.lib.plugin.PluginSide;
@@ -104,7 +105,7 @@ public class Main extends BukkitPlugin implements Listener {
     }
 
     public int getOnlinePlayers() {
-        return getLibrary().getNetworkManager().getOnlineGroup(ServerGroup.SKYBLOCK);
+        return getLibrary().getNetworkManager().getOnlineClass(ServerClass.AURORA);
     }
     
 }

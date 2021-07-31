@@ -1,6 +1,5 @@
 package me.badbones69.crazyenvoy.api.objects;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.badbones69.crazyenvoy.Methods;
 import me.badbones69.crazyenvoy.multisupport.SkullCreator;
 import me.badbones69.crazyenvoy.multisupport.Version;
@@ -119,10 +118,17 @@ public class ItemBuilder implements Cloneable {
             ItemMeta itemMeta = item.getItemMeta();
             itemBuilder.setName(itemMeta.getDisplayName())
             .setLore(itemMeta.getLore());
-            NBTItem nbt = new NBTItem(item);
-            if (nbt.hasKey("Unbreakable")) {
-                itemBuilder.setUnbreakable(nbt.getBoolean("Unbreakable"));
+
+            // Start SpaceDelta
+            // NBTItem nbt = new NBTItem(item);
+            if (item.getItemMeta().isUnbreakable()) {
+                itemBuilder.setUnbreakable(true);
             }
+            // if (nbt.hasKey("Unbreakable")) {
+              //  itemBuilder.setUnbreakable(nbt.getBoolean("Unbreakable"));
+            // }
+            // End SpaceDelta
+
             if (useNewMaterial) {
                 if (itemMeta instanceof Damageable) {
                     itemBuilder.setDamage(((Damageable) itemMeta).getDamage());
@@ -890,18 +896,26 @@ public class ItemBuilder implements Cloneable {
             hideFlags(item);
             item.addUnsafeEnchantments(enchantments);
             addGlow(item);
-            NBTItem nbt = new NBTItem(item);
+            // Start SpaceDelta
+            // NBTItem nbt = new NBTItem(item);
             if (isHead && !isHash && player != null && !player.equals("") && Version.isNewer(Version.v1_8_R3)) {
-                nbt.setString("SkullOwner", player);
+                // nbt.setString("SkullOwner", player);
+                ((SkullMeta) item.getItemMeta()).setOwner(player);
             }
             if (isMobEgg && entityType != null) {
-                nbt.addCompound("EntityTag").setString("id", "minecraft:" + entityType.name());
+                ((SpawnEggMeta) item).setSpawnedType(entityType);
+                // nbt.addCompound("EntityTag").setString("id", "minecraft:" + entityType.name());
+
             }
             if (unbreakable && Version.isOlder(Version.v1_11_R1)) {
-                nbt.setBoolean("Unbreakable", true);
-                nbt.setInteger("HideFlags", 4);
+                item.getItemMeta().setUnbreakable(true);
+                item.getItemMeta().addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+                // nbt.setBoolean("Unbreakable", true);
+                // nbt.setInteger("HideFlags", 4);
             }
-            return nbt.getItem();
+
+            return item; // nbt.getItem();
+            // End SpaceDelta
         } else {
             return item;
         }

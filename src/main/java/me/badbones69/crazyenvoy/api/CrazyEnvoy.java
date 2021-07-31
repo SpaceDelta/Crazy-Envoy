@@ -19,6 +19,8 @@ import me.badbones69.crazyenvoy.controllers.FireworkDamageAPI;
 import me.badbones69.crazyenvoy.multisupport.*;
 import me.badbones69.crazyenvoy.multisupport.holograms.HolographicSupport;
 import me.badbones69.crazyenvoy.sync.handler.ClientStateHandler;
+import me.badbones69.crazyenvoy.worldguard.WorldGuardVersion;
+import me.badbones69.crazyenvoy.worldguard.WorldGuard_v7;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -240,7 +242,7 @@ public class CrazyEnvoy {
             }
         }
         if (Support.WORLD_GUARD.isPluginLoaded() && Support.WORLD_EDIT.isPluginLoaded()) {
-            worldGuardVersion = Version.isNewer(Version.v1_12_R1) ? new WorldGuard_v7() : new WorldGuard_v6();
+            worldGuardVersion = new WorldGuard_v7(); // SpaceDelta Version.isNewer(Version.v1_12_R1) ? new WorldGuard_v7() : new WorldGuard_v6();
         }
         if (Support.HOLOGRAPHIC_DISPLAYS.isPluginLoaded()) {
             hologramController = new HolographicSupport();

@@ -1,0 +1,92 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'net.spacedelta'
+version '1.3.11-RELEASE'
+
+sourceCompatibility = 11
+
+repositories {
+    mavenCentral()
+
+    /* Nebula + Library */
+    maven {
+        credentials {
+            username sd_user
+            password sd_pass
+        }
+
+        url sd_repo
+        allowInsecureProtocol = true
+    }
+
+    /* Bungee Chat */
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+
+    /* Vault */
+    maven { url 'https://jitpack.io' }
+
+    /* WorldEdit */
+    maven {
+        url 'http://maven.enginehub.org/repo/'
+        allowInsecureProtocol = true
+    }
+
+    /* Holographic Displays */
+    maven { url 'https://repo.codemc.io/repository/maven-public/' }
+
+    /* PlaceholderAPI */
+    maven {
+        url 'http://repo.extendedclip.com/content/repositories/placeholderapi/'
+        allowInsecureProtocol = true
+    }
+
+}
+
+dependencies {
+    compileOnly group: 'net.spacedelta', name: 'library', version: '1.2.7-SNAPSHOT'
+    compileOnly group: 'net.spacedelta', name: 'nebula', version: '1.16.5-R0.1-SNAPSHOT'
+
+    compileOnly group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
+
+    /* Vault */
+    compileOnly(group: 'com.github.MilkBowl', name: 'VaultAPI', version: '1.7') {
+        exclude group: 'org.bukkit'
+    }
+
+    /* Holographic Displays */
+    compileOnly group: 'com.gmail.filoghost.holographicdisplays', name: 'holographicdisplays-api', version: '2.4.4'
+
+    /* PlaceholderAPI */
+    compileOnly group: 'me.clip', name: 'placeholderapi', version: '2.10.9'
+
+    /* WorldGuard */
+    compileOnly (group: 'com.sk89q.worldguard', name: 'worldguard-bukkit', version: '7.0.5-SNAPSHOT') {
+        exclude group: 'org.spigotmc'
+    }
+
+}
+
+publishing {
+
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            credentials {
+                username sd_user
+                password sd_pass
+            }
+
+            url sd_libs
+            allowInsecureProtocol = true
+        }
+    }
+
+}
