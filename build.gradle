@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'me.badbones69'
-version '1.3.11-RELEASE'
+version '1.3.12-RELEASE'
 
 sourceCompatibility = 11
 
@@ -67,6 +67,27 @@ dependencies {
         exclude group: 'org.spigotmc'
     }
 
+}
+
+task copyToServer {
+    def source = "build\\libs\\${project.name}-${project.version}.jar" as Object
+    def pluginspath = server_builder + "\\src\\sub\\plugins";
+    doLast {
+        println("")
+        fileTree(pluginspath).getFiles().findAll {
+            it.name.toLowerCase().contains(project.name.toLowerCase()) && it.name.endsWith('.jar')
+
+        }.collect {
+            delete it
+            println("deleted old version at " + it)
+        }
+
+        copy {
+            from source
+            into pluginspath
+        }
+        println("put new version at " + pluginspath + "\\${project.name}-${project.version}.jar")
+    }
 }
 
 publishing {

@@ -22,6 +22,13 @@ public class EnvoyCommandLite implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command c, @NotNull String l, @NotNull String[] args) {
         if (sender.hasPermission("envoy.flare.give")) {
+            if (args.length == 1) {
+                if (args[0].equalsIgnoreCase("time")) {
+                    requestTime(sender);
+                }
+                return true;
+            }
+
             int amount = 1;
             Player player;
             if (args.length >= 2) {
@@ -56,11 +63,16 @@ public class EnvoyCommandLite implements CommandExecutor {
             Flare.giveFlare(player, amount);
             return true;
         }
+        else {
+            requestTime(sender);
+        }
+        return true;
+    }
 
+    private void requestTime(CommandSender sender) {
         var data = DataBuffer.create()
                 .write("uuid", ((OfflinePlayer) sender).getUniqueId().toString());
 
         Library.get().getMessageBus().fire(Main.INSTANCE, MessageType.TIME_REQUEST, data);
-        return true;
     }
 }

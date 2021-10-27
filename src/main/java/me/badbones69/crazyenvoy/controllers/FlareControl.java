@@ -23,8 +23,8 @@ import java.util.HashMap;
 
 public class FlareControl implements Listener {
     
-    private CrazyEnvoy envoy = CrazyEnvoy.getInstance();
-    private EnvoySettings envoySettings = EnvoySettings.getInstance();
+    private final CrazyEnvoy envoy = CrazyEnvoy.getInstance();
+    private final EnvoySettings envoySettings = EnvoySettings.getInstance();
     
     @EventHandler
     public void onFlareActivate(PlayerInteractEvent e) {

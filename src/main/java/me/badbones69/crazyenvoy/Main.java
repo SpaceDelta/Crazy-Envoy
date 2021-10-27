@@ -15,6 +15,7 @@ import me.badbones69.crazyenvoy.multisupport.holograms.HolographicSupport;
 import me.badbones69.crazyenvoy.sync.MessageType;
 import me.badbones69.crazyenvoy.sync.handler.ChatMessageHandler;
 import me.badbones69.crazyenvoy.sync.handler.ClientStateHandler;
+import me.badbones69.crazyenvoy.sync.handler.TimeHandler;
 import me.badbones69.crazyenvoy.sync.handler.TimeRequestHandler;
 import net.spacedelta.lib.network.data.model.server.ServerClass;
 import net.spacedelta.lib.network.data.model.server.ServerGroup;
@@ -29,20 +30,23 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
+
 public class Main extends BukkitPlugin implements Listener {
 
     @Instance
     public static Main INSTANCE;
 
-    private FileManager fileManager = FileManager.getInstance();
-    private CrazyEnvoy envoy = CrazyEnvoy.getInstance();
+    private final FileManager fileManager = FileManager.getInstance();
+    private final CrazyEnvoy envoy = CrazyEnvoy.getInstance();
     
     @Override
     public void enable() {
         PluginManager pm = Bukkit.getPluginManager();
 
+        TimeHandler timeHandler = new TimeHandler();
         if (getSide() == PluginSide.CLIENT) {
-            getCommand("envoy").setExecutor(new EnvoyCommandLite());
+            Objects.requireNonNull(getCommand("envoy")).setExecutor(new EnvoyCommandLite());
             getLibrary().getMessageBus().registerHandler(this, MessageType.CHAT_MESSAGE, new ChatMessageHandler());
             getLibrary().getMessageBus().registerHandler(this, MessageType.STATE, new ClientStateHandler());
 
@@ -69,8 +73,8 @@ public class Main extends BukkitPlugin implements Listener {
                 if (Version.isNewer(Version.v1_10_R1)) {
                     pm.registerEvents(new FireworkDamageAPI(this), this);
                 }
-            } catch (Exception e) {
-            }
+            } catch (Exception ignored) {}
+
             if (Support.HOLOGRAPHIC_DISPLAYS.isPluginLoaded()) {
                 HolographicSupport.registerPlaceHolders();
             }
@@ -78,10 +82,12 @@ public class Main extends BukkitPlugin implements Listener {
                 new PlaceholderAPISupport(this).register();
             }
 
-            getCommand("envoy").setExecutor(new EnvoyCommand());
+            Objects.requireNonNull(getCommand("envoy")).setExecutor(new EnvoyCommand());
             getLibrary().getMessageBus().registerHandler(this, MessageType.TIME_REQUEST, new TimeRequestHandler());
+            TimeHandler.startTask();
         }
 
+        getLibrary().getMessageBus().registerHandler(this, MessageType.TIME, timeHandler);
         pm.registerEvents(new FlareControl(), this);
     }
     

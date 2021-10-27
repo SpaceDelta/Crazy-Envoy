@@ -8,6 +8,10 @@ import net.spacedelta.lib.message.MessageHandler;
 import net.spacedelta.lib.schedule.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,6 +24,7 @@ public class ClientStateHandler implements MessageHandler {
     private static final String BAR_MESSAGE = ChatColor.RED + ChatColor.BOLD.toString()
             + "ON-GOING ENVOY" + ChatColor.WHITE + " Join the event at " + ChatColor.RED + ChatColor.BOLD.toString() +  "/pvp";
     private Task<?> notifyTask;
+    private int times;
 
     @Override
     public void handle(@NotNull DataBuffer dataBuffer) {
@@ -38,9 +43,22 @@ public class ClientStateHandler implements MessageHandler {
         if (notifyTask != null)
             return;
 
+        times = 30;
         notifyTask = Task.builder()
                 .repeat(30)
-                .execute(() -> Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(BAR_MESSAGE)))
+                .execute(() -> {
+                    BossBar bossBar = Bukkit.getBossBar(NamespacedKey.minecraft("crazyenvoy"));
+                    if (bossBar == null) {
+                        Bukkit.createBossBar(NamespacedKey.minecraft("crazyenvoy"), BAR_MESSAGE, BarColor.RED, BarStyle.SOLID);
+                    }
+                    if (times <= 1) {
+                        Bukkit.removeBossBar(NamespacedKey.minecraft("crazyenvoy"));
+                    }
+                    else {
+                        times--;
+                    }
+//                    Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(BAR_MESSAGE))
+                })
                 .schedule();
     }
 
