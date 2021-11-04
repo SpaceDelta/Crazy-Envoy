@@ -14,6 +14,8 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * State handler.
  *
@@ -21,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ClientStateHandler implements MessageHandler {
 
-    private static final String BAR_MESSAGE = ChatColor.RED + ChatColor.BOLD.toString()
-            + "ON-GOING ENVOY" + ChatColor.WHITE + " Join the event at " + ChatColor.RED + ChatColor.BOLD.toString() +  "/pvp";
+    private static final String BAR_MESSAGE = ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString()
+            + "ON-GOING ENVOY" + ChatColor.WHITE + " Join the event at " + ChatColor.LIGHT_PURPLE +  "/pvp";
     private Task<?> notifyTask;
     private int times;
 
@@ -45,19 +47,24 @@ public class ClientStateHandler implements MessageHandler {
 
         times = 30;
         notifyTask = Task.builder()
-                .repeat(30)
+                .repeat(30, TimeUnit.SECONDS)
                 .execute(() -> {
                     BossBar bossBar = Bukkit.getBossBar(NamespacedKey.minecraft("crazyenvoy"));
                     if (bossBar == null) {
-                        Bukkit.createBossBar(NamespacedKey.minecraft("crazyenvoy"), BAR_MESSAGE, BarColor.RED, BarStyle.SOLID);
+                        bossBar = Bukkit.createBossBar(NamespacedKey.minecraft("crazyenvoy"), BAR_MESSAGE, BarColor.PURPLE, BarStyle.SOLID);
                     }
+
+                    Bukkit.getOnlinePlayers().forEach(bossBar::addPlayer);
+                    bossBar.setVisible(true);
+                    bossBar.setProgress(1.0);
+
                     if (times <= 1) {
                         Bukkit.removeBossBar(NamespacedKey.minecraft("crazyenvoy"));
+                        bossBar.setVisible(false);
                     }
                     else {
                         times--;
                     }
-//                    Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(BAR_MESSAGE))
                 })
                 .schedule();
     }

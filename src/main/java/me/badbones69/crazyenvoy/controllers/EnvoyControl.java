@@ -12,9 +12,11 @@ import me.badbones69.crazyenvoy.api.objects.ItemBuilder;
 import me.badbones69.crazyenvoy.api.objects.Prize;
 import me.badbones69.crazyenvoy.api.objects.Tier;
 import me.badbones69.crazyenvoy.bossbar.EnvoyBossbarTracker;
+import net.spacedelta.lib.util.SoundUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -102,17 +104,11 @@ public class EnvoyControl implements Listener {
                     }
                     if (!envoy.getActiveEnvoys().isEmpty()) {
                         if (envoySettings.isPickupBroadcastEnabled()) {
-                            HashMap<String, String> placeholder = new HashMap<>();
-                            placeholder.put("%player%", player.getName());
-                            placeholder.put("%Player%", player.getName());
-                            placeholder.put("%amount%", envoy.getActiveEnvoys().size() + "");
-                            placeholder.put("%Amount%", envoy.getActiveEnvoys().size() + "");
-
                             final EnvoyBossbarTracker envoyBossbar = envoy.getEnvoyBossbar();
-                            envoyBossbar.triggerUpdate(envoy.getActiveEnvoys().size());
-
-                            if (envoyBossbar.getWorld() != null)
-                                Messages.LEFT.broadcastMessageActionBar(envoyBossbar.getWorld(), true, placeholder);
+                            envoyBossbar.triggerUpdate(player, envoy.getActiveEnvoys().size());
+                            Bukkit.getOnlinePlayers().forEach(loopPlayer -> {
+                                SoundUtils.playSound(loopPlayer, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
+                            });
                         }
                     } else {
                         EnvoyEndEvent event = new EnvoyEndEvent(EnvoyEndReason.ALL_CRATES_COLLECTED);

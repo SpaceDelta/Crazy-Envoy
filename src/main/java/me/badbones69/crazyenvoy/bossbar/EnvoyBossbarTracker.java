@@ -8,6 +8,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -37,10 +38,10 @@ public class EnvoyBossbarTracker implements Listener {
      */
     public void init(@NotNull World world, int crates) {
         bossBar = Bukkit.createBossBar(
-                ChatColor.DARK_AQUA + ChatColor.BOLD.toString() + crates + " Crates Left",
-                BarColor.GREEN,
-                BarStyle.SEGMENTED_12,
-                BarFlag.CREATE_FOG
+                ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString()
+                        + "ON-GOING ENVOY " + ChatColor.WHITE + crates + " Crates Left",
+                BarColor.PURPLE,
+                BarStyle.SOLID
         );
         this.world = world;
 
@@ -56,10 +57,14 @@ public class EnvoyBossbarTracker implements Listener {
      *
      * @param crates crates left to pick up
      */
-    public void triggerUpdate(int crates) {
+    public void triggerUpdate(Player player, int crates) {
         if (bossBar != null) {
-            bossBar.setTitle(ChatColor.DARK_AQUA + ChatColor.BOLD.toString() + crates + " Crates Left");
             bossBar.setProgress((float) crates / initialCrates);
+            bossBar.setTitle(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString()
+                    + "ON-GOING ENVOY " + ChatColor.WHITE + " A Crate Got Picked Up By " + ChatColor.LIGHT_PURPLE + player.getName());
+
+            Bukkit.getScheduler().runTaskLater(Main.INSTANCE, () -> bossBar.setTitle(ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString()
+                    + "ON-GOING ENVOY " + ChatColor.WHITE + crates + " Crates Left"), 45);
         }
     }
 
