@@ -222,7 +222,8 @@ public class EnvoyCommand implements CommandExecutor {
                             Bukkit.getPluginManager().callEvent(event);
                             envoy.endEnvoyEvent();
                             if (envoy.getEnvoyBossbar().getWorld() != null)
-                            Messages.ENDED.broadcastMessageLocal(envoy.getEnvoyBossbar().getWorld(), false, Maps.newHashMap());
+                                Messages.ENDED.broadcastMessageLocal(envoy.getEnvoyBossbar().getWorld(), false, Maps.newHashMap());
+
                             Messages.FORCE_ENDED.sendMessage(sender);
                         } else {
                             Messages.NOT_STARTED.sendMessage(sender);

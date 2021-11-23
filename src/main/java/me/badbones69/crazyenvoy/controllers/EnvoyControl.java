@@ -104,6 +104,7 @@ public class EnvoyControl implements Listener {
                     }
                     if (!envoy.getActiveEnvoys().isEmpty()) {
                         if (envoySettings.isPickupBroadcastEnabled()) {
+                            // SpaceDelta
                             final EnvoyBossbarTracker envoyBossbar = envoy.getEnvoyBossbar();
                             envoyBossbar.triggerUpdate(player, envoy.getActiveEnvoys().size());
                             Bukkit.getOnlinePlayers().forEach(loopPlayer -> {

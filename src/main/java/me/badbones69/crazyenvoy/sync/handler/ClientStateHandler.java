@@ -12,6 +12,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.boss.KeyedBossBar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
@@ -25,19 +26,26 @@ public class ClientStateHandler implements MessageHandler {
 
     private static final String BAR_MESSAGE = ChatColor.LIGHT_PURPLE + ChatColor.BOLD.toString()
             + "ON-GOING ENVOY" + ChatColor.WHITE + " Join the event at " + ChatColor.LIGHT_PURPLE +  "/pvp";
+    private static final NamespacedKey ENVOY_KEY = NamespacedKey.minecraft("crazyenvoy");
+
     private Task<?> notifyTask;
     private int times;
 
     @Override
     public void handle(@NotNull DataBuffer dataBuffer) {
-        System.out.println("input "+ dataBuffer.serialize());
         // game start
         if (dataBuffer.readNumber("state").intValue() == 1) {
             startTask();
         } else {
             // game ends
-            if (notifyTask != null)
+            if (notifyTask != null) {
                 notifyTask.cancel();
+                notifyTask = null;
+            }
+
+            final KeyedBossBar bossBar = Bukkit.getBossBar(ENVOY_KEY);
+            if (bossBar != null)
+                bossBar.removeAll();
         }
     }
 
@@ -49,9 +57,9 @@ public class ClientStateHandler implements MessageHandler {
         notifyTask = Task.builder()
                 .repeat(30, TimeUnit.SECONDS)
                 .execute(() -> {
-                    BossBar bossBar = Bukkit.getBossBar(NamespacedKey.minecraft("crazyenvoy"));
+                    BossBar bossBar = Bukkit.getBossBar(ENVOY_KEY);
                     if (bossBar == null) {
-                        bossBar = Bukkit.createBossBar(NamespacedKey.minecraft("crazyenvoy"), BAR_MESSAGE, BarColor.PURPLE, BarStyle.SOLID);
+                        bossBar = Bukkit.createBossBar(ENVOY_KEY, BAR_MESSAGE, BarColor.PURPLE, BarStyle.SOLID);
                     }
 
                     Bukkit.getOnlinePlayers().forEach(bossBar::addPlayer);
@@ -59,7 +67,7 @@ public class ClientStateHandler implements MessageHandler {
                     bossBar.setProgress(1.0);
 
                     if (times <= 1) {
-                        Bukkit.removeBossBar(NamespacedKey.minecraft("crazyenvoy"));
+                        Bukkit.removeBossBar(ENVOY_KEY);
                         bossBar.setVisible(false);
                     }
                     else {
