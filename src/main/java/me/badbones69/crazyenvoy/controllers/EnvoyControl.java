@@ -96,7 +96,7 @@ public class EnvoyControl implements Listener {
                                 if (Methods.isInvFull(player)) {
                                     e.getClickedBlock().getWorld().dropItem(block.getLocation(), item);
                                 } else {
-                                    player.getInventory().addItem(item);
+                                    player.getInventory().addItem(item.clone());
                                 }
                             }
                         }
